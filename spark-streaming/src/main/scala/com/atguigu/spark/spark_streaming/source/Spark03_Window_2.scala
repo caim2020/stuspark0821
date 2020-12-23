@@ -9,7 +9,7 @@ import org.apache.spark.streaming.{Seconds, StreamingContext}
  */
 
 
-object Spark03_Window_1 {
+object Spark03_Window_2 {
     def main(args: Array[String]): Unit = {
         System.setProperty("HADOOP_USER_NAME", "atguigu")
         val conf = new SparkConf().setMaster("local[2]").setAppName("Spark01_Source_Kafka")
@@ -17,18 +17,11 @@ object Spark03_Window_1 {
         ssc.checkpoint("hdfs://hadoop162:8020/ck1")
         ssc
             .socketTextStream("hadoop162", 9999)
+            .window(Seconds(9), Seconds(6))
             .flatMap(_.split(" "))
             .map((_, 1L))
-            //.reduceByKeyAndWindow(_ + _, Seconds(9))
-            //.reduceByKeyAndWindow((_: Long) + (_: Long), Seconds(9), Seconds(6))
-            .reduceByKeyAndWindow(
-                (_: Long) + (_: Long),
-                (x, y) => x - y,
-                Seconds(9),
-                filterFunc = kv => kv._2 != 0)
-            
+            .reduceByKey(_ + _)
             .print()
-        
         
         ssc.start()
         ssc.awaitTermination()
