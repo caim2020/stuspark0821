@@ -11,4 +11,5 @@ case class AdsLog(timestamp: Long,
                   adsId: String){
     
     val logDate = new SimpleDateFormat("yyyy-MM-dd").format(new Date(timestamp))
+    val logMinute = new SimpleDateFormat("HH:mm").format(new Date(timestamp))
 }
