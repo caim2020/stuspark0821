@@ -9,7 +9,6 @@ import scala.collection.mutable.ListBuffer
 object MyJdbcUtil {
     
     def readFormJdbc(url: String, sql: String, args: scala.Array[Any]): ListBuffer[Map[String, Object]] = {
-        println(sql)
         val conn: Connection = DriverManager.getConnection(url)
         val ps: PreparedStatement = conn.prepareStatement(sql)
         for (i <- args.indices) { // 替换每行的占位符
@@ -30,7 +29,6 @@ object MyJdbcUtil {
             }
             result += map.toMap
         }
-        
         result
     }
     

@@ -20,10 +20,15 @@ object RealtimeApp {
                 val split: Array[String] = line.split(" ")
                 AdsLog(split(0).toLong, split(1), split(2), split(3), split(4))
             })
-        
+        adsLogStream.cache()
+        // 需求1前传: 应该先对流中的数据做过滤: 把已经进入黑名单的用户数据过滤掉, 因为没有计算的毕业
+       // val filteredAdsLogStream = BlackListHandler.filterBlackList(adsLogStream)
+       // filteredAdsLogStream.print()
         // 需求1: 做黑名单   先计算每个用户每个广告的点击量, 然后把点击量写到mysql, 然后再判断数据是否到了阈值,决定是否写入到黑名单
-        BlackListHandler.writeBlackList(adsLogStream)
+       // BlackListHandler.writeBlackList(filteredAdsLogStream)
         
+        // 需求2: 统计每天每地区每城市没广告的点击量
+        DateAreaCityAdsHandler.writeCountToMysql(adsLogStream)
         
         ssc.start()
         ssc.awaitTermination()
